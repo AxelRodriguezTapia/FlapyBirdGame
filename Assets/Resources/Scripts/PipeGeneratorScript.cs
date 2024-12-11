@@ -6,7 +6,7 @@ public class PipeGeneratorScript : MonoBehaviour
 {
     public GameObject pipePrefab; // El prefab de la tubería a instanciar
     public float minHeight = -1f; // Altura mínima donde puede aparecer la tubería
-    public float maxHeight = 3f;  // Altura máxima donde puede aparecer la tubería
+    public float maxHeight = 2.85f;  // Altura máxima donde puede aparecer la tubería
     public float spawnInterval = 2f; // Intervalo en segundos para generar las tuberías
 
     // Start is called before the first frame update

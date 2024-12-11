@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;  // Necesario para interactuar con los UI elementos
 
 public class PajeroScript : MonoBehaviour
 {
@@ -9,6 +10,11 @@ public class PajeroScript : MonoBehaviour
 
     // Componente Rigidbody2D del objeto
     private Rigidbody2D rb;
+
+    private float currentCooldownTime = 0f;
+
+    // Componente Animator para la animación del pájaro
+    private Animator animator;
 
     // Variables para la cámara
     private Camera mainCamera;
@@ -21,11 +27,18 @@ public class PajeroScript : MonoBehaviour
     public float maxTiltAngle = 45f;  // Ángulo máximo de inclinación
     public float tiltSpeed = 2f;  // Velocidad de inclinación
 
+    private bool isDead;
+
+
     void Start()
     {
+        isDead = false;
         // Obtener el Rigidbody2D del objeto al que está adjunto el script
         rb = GetComponent<Rigidbody2D>();
         gameManager = GameObject.FindGameObjectWithTag("GameController");
+
+        // Obtener el componente Animator del objeto (para controlar la animación)
+        animator = GetComponent<Animator>();
 
         // Obtener la cámara principal
         mainCamera = Camera.main;
@@ -38,7 +51,7 @@ public class PajeroScript : MonoBehaviour
     void Update()
     {
         // Comprobar si el jugador toca la pantalla (o hace clic)
-        if (Input.GetMouseButtonDown(0)) // 0 significa clic izquierdo o primer toque
+        if (Input.GetMouseButtonDown(0) && !isDead) // 0 significa clic izquierdo o primer toque
         {
             // Verificar que el objeto tiene un Rigidbody2D
             if (rb != null)
@@ -51,6 +64,9 @@ public class PajeroScript : MonoBehaviour
 
                 // Aplicar la fuerza al objeto
                 rb.AddForce(forceDirection * forceAmount, ForceMode2D.Impulse);
+
+                // Activar la animación de "salto" o "vuelo"
+                animator.SetTrigger("Fly"); // Asegúrate de que tienes un Trigger llamado "Fly" en el Animator
             }
         }
 
@@ -58,7 +74,20 @@ public class PajeroScript : MonoBehaviour
         if (IsOutOfScreen())
         {
             // Destruir el objeto si ha salido de la pantalla
-            Destroy(gameObject);
+            isDead=true;
+            animator.SetTrigger("Die");
+        }
+
+        if (isDead)
+        {
+            // Sumar el tiempo transcurrido
+            currentCooldownTime += Time.deltaTime;
+
+            // Comprobar si han pasado los 3 segundos
+            if (currentCooldownTime >= 3f)
+            {
+                Destroy(gameObject);
+            }
         }
 
         // Controlar la rotación del pájaro
@@ -98,5 +127,10 @@ public class PajeroScript : MonoBehaviour
     void OnTriggerExit2D(Collider2D collider2D)
     {
         gameManager.GetComponent<AddScoreScript>().sumScore();
+    }
+
+    public void setDead(bool b)
+    {
+        isDead = b;
     }
 }
