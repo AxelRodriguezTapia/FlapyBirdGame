@@ -17,6 +17,10 @@ public class PajeroScript : MonoBehaviour
 
     private GameObject gameManager;
 
+    // Variables para la rotación
+    public float maxTiltAngle = 45f;  // Ángulo máximo de inclinación
+    public float tiltSpeed = 2f;  // Velocidad de inclinación
+
     void Start()
     {
         // Obtener el Rigidbody2D del objeto al que está adjunto el script
@@ -43,8 +47,7 @@ public class PajeroScript : MonoBehaviour
                 rb.velocity = Vector2.zero;
 
                 // Calcular la dirección hacia la que se aplicará la fuerza
-                // En este caso, vamos a aplicar la fuerza hacia arriba en el eje Y
-                Vector2 forceDirection = Vector2.up; // Puedes cambiar esta dirección si quieres aplicar la fuerza en otra dirección
+                Vector2 forceDirection = Vector2.up; // Aplicamos la fuerza hacia arriba
 
                 // Aplicar la fuerza al objeto
                 rb.AddForce(forceDirection * forceAmount, ForceMode2D.Impulse);
@@ -57,6 +60,9 @@ public class PajeroScript : MonoBehaviour
             // Destruir el objeto si ha salido de la pantalla
             Destroy(gameObject);
         }
+
+        // Controlar la rotación del pájaro
+        HandleRotation();
     }
 
     // Función que determina si el objeto ha salido de la pantalla
@@ -66,8 +72,26 @@ public class PajeroScript : MonoBehaviour
         Vector3 screenPosition = mainCamera.WorldToViewportPoint(transform.position);
 
         // Comprobar si la posición está fuera de los límites visibles de la cámara
-        // Los valores de viewport van de 0 a 1, por lo que cualquier valor fuera de este rango significa que está fuera de la pantalla
         return screenPosition.x < 0 || screenPosition.x > 1 || screenPosition.y < 0 || screenPosition.y > 1;
+    }
+
+    // Método para controlar la rotación del pájaro
+    void HandleRotation()
+    {
+        // Si el pájaro está cayendo (velocidad negativa en el eje Y), rota hacia abajo
+        if (rb.velocity.y < 0)
+        {
+            // Rota hacia abajo, dentro de un rango
+            float tiltAngle = Mathf.LerpAngle(transform.eulerAngles.z, -maxTiltAngle, Time.deltaTime * tiltSpeed);
+            transform.rotation = Quaternion.Euler(0, 0, tiltAngle);
+        }
+        // Si el pájaro está subiendo (velocidad positiva en el eje Y), rota hacia arriba
+        else if (rb.velocity.y > 0)
+        {
+            // Rota hacia arriba, dentro de un rango
+            float tiltAngle = Mathf.LerpAngle(transform.eulerAngles.z, maxTiltAngle, Time.deltaTime * tiltSpeed);
+            transform.rotation = Quaternion.Euler(0, 0, tiltAngle);
+        }
     }
 
     // Método de colisión
