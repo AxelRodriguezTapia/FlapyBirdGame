@@ -8,12 +8,13 @@ public class PipeGeneratorScript : MonoBehaviour
     public float minHeight = -1f; // Altura mínima donde puede aparecer la tubería
     public float maxHeight = 2.85f;  // Altura máxima donde puede aparecer la tubería
     public float spawnInterval = 2f; // Intervalo en segundos para generar las tuberías
+    private bool startTrigger = true;
 
     // Start is called before the first frame update
     void Start()
     {
         // Llama a la función que instanciará las tuberías cada 'spawnInterval' segundos
-        InvokeRepeating("SpawnPipe", 0f, spawnInterval);
+        //InvokeRepeating("SpawnPipe", 0f, spawnInterval);
     }
 
     // Función para instanciar el prefab en una posición aleatoria
@@ -25,5 +26,14 @@ public class PipeGeneratorScript : MonoBehaviour
         // Instancia el prefab de la tubería en la posición deseada
         Vector3 spawnPosition = new Vector3(transform.position.x, randomHeight, 0); // Mantiene la posición en X y Z del generador
         Instantiate(pipePrefab, spawnPosition, Quaternion.identity);
+    }
+
+    void Update()
+    {
+        if(Input.GetMouseButtonDown(0) && startTrigger)
+        {
+            InvokeRepeating("SpawnPipe", 0f, spawnInterval);
+            startTrigger=false;
+        }
     }
 }
