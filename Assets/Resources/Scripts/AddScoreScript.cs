@@ -46,7 +46,7 @@ public class AddScoreScript : MonoBehaviour
         }
 
         // Ocultar el texto inicial "Pulsa para empezar" después del primer toque
-        if (Input.GetMouseButtonDown(0) && startTrigger)
+        if ((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) && startTrigger)
         {
             PulsaParaEmpezarText.text = "";
             startTrigger = false;

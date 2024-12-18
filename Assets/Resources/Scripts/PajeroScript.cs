@@ -36,7 +36,7 @@ public class PajeroScript : MonoBehaviour
     void Update()
     {
         // Iniciar el juego al primer toque/clic
-        if (!gameStarted && Input.GetMouseButtonDown(0))
+        if (!gameStarted && (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began))
         {
             gameStarted = true;
             rb.isKinematic = false; // Habilitar física
@@ -47,7 +47,7 @@ public class PajeroScript : MonoBehaviour
         if (!gameStarted) return;
 
         // Comprobar si el jugador toca la pantalla para saltar
-        if (Input.GetMouseButtonDown(0) && !isDead)
+        if ((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) && !isDead)
         {
             if (rb != null)
             {

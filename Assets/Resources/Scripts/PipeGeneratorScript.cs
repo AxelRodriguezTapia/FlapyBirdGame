@@ -30,7 +30,7 @@ public class PipeGeneratorScript : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetMouseButtonDown(0) && startTrigger)
+        if((Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) && startTrigger)
         {
             InvokeRepeating("SpawnPipe", 0f, spawnInterval);
             startTrigger=false;
